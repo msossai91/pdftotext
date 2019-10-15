@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Bakame\Pdftotext;
 
-interface Exception extends \Throwable
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
+class ProcessFailed extends ProcessFailedException implements ExtractionFailed
 {
 }

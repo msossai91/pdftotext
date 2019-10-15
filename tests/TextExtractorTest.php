@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace BakameTest\Pdftotext;
 
-use Bakame\Pdftotext\ExtractionFailed;
 use Bakame\Pdftotext\FileNotFound;
 use Bakame\Pdftotext\FileNotSaved;
+use Bakame\Pdftotext\ProcessFailed;
 use Bakame\Pdftotext\TextExtractor;
 use PHPUnit\Framework\TestCase;
 use function unlink;
@@ -159,7 +159,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtractThrowsExceptionIfTheBinaryIsNotFound(): void
     {
-        $this->expectException(ExtractionFailed::class);
+        $this->expectException(ProcessFailed::class);
         (new TextExtractor('/there/is/no/place/like/home/pdftotext'))
             ->toString($this->dummyPdf);
     }
@@ -169,7 +169,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtractThrowsExceptionIfTheOptionsIsInvalid(): void
     {
-        $this->expectException(ExtractionFailed::class);
+        $this->expectException(ProcessFailed::class);
         (new TextExtractor($this->binPath, ['-foo']))->toString($this->dummyPdf);
     }
 

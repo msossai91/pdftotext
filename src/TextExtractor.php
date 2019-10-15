@@ -133,7 +133,7 @@ final class TextExtractor
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new ExtractionFailed($process);
+            throw new ProcessFailed($process);
         }
 
         return trim($process->getOutput(), " \t\n\r\0\x0B\x0C");

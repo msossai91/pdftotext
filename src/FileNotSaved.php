@@ -13,6 +13,6 @@ declare(strict_types=1);
 
 namespace Bakame\Pdftotext;
 
-class FileNotSaved extends \RuntimeException implements Exception
+class FileNotSaved extends \RuntimeException implements ExtractionFailed
 {
 }
