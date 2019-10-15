@@ -49,7 +49,7 @@ yum install poppler-utils
 You can install the package via composer:
 
 ```bash
-composer require bakame/pdf-text-extractor
+composer require bakame/pdftotext
 ```
 
 ## Usage

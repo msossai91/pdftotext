@@ -19,6 +19,7 @@ use Bakame\Pdftotext\Pdftotext;
 use Bakame\Pdftotext\ProcessFailed;
 use PHPUnit\Framework\TestCase;
 use function unlink;
+use const PHP_OS;
 
 /**
  * @coversDefaultClass \Bakame\Pdftotext\Pdftotext
@@ -39,6 +40,15 @@ class TextExtractorTest extends TestCase
      * @var string
      */
     protected $binPath = '/usr/local/bin/pdftotext';
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        if (0 !== stripos(PHP_OS, 'darwin')) {
+            $this->binPath = '/usr/bin/pdftotext';
+        }
+    }
 
     /**
      * @covers ::__construct
