@@ -24,7 +24,7 @@ use function is_string;
 use function sprintf;
 use function trim;
 
-final class TextExtractor
+final class Pdftotext
 {
     /**
      * Default process timeout in seconds.

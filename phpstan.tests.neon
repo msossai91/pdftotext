@@ -4,6 +4,6 @@ includes:
   - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
   ignoreErrors:
-    - '#Parameter \#1 \$pdfPath of method Bakame\\Pdftotext\\TextExtractor::toString\(\) expects SplFileInfo\|string, array<int\, string> given.#'
-    - '#Parameter \#2 \$destPath of method Bakame\\Pdftotext\\TextExtractor::toFile\(\) expects SplFileObject\|string, array given.#'
+    - '#Parameter \#1 \$pdfPath of method Bakame\\Pdftotext\\Pdftotext::toString\(\) expects SplFileInfo\|string, array<int\, string> given.#'
+    - '#Parameter \#2 \$destPath of method Bakame\\Pdftotext\\Pdftotext::toFile\(\) expects SplFileObject\|string, array given.#'
   reportUnmatchedIgnoredErrors: true

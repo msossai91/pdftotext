@@ -15,13 +15,13 @@ namespace BakameTest\Pdftotext;
 
 use Bakame\Pdftotext\FileNotFound;
 use Bakame\Pdftotext\FileNotSaved;
+use Bakame\Pdftotext\Pdftotext;
 use Bakame\Pdftotext\ProcessFailed;
-use Bakame\Pdftotext\TextExtractor;
 use PHPUnit\Framework\TestCase;
 use function unlink;
 
 /**
- * @coversDefaultClass \Bakame\Pdftotext\TextExtractor
+ * @coversDefaultClass \Bakame\Pdftotext\Pdftotext
  */
 class TextExtractorTest extends TestCase
 {
@@ -46,7 +46,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtract(): void
     {
-        $text = (new TextExtractor($this->binPath))->toString($this->dummyPdf);
+        $text = (new Pdftotext($this->binPath))->toString($this->dummyPdf);
 
         self::assertSame($this->dummyPdfText, $text);
     }
@@ -59,7 +59,7 @@ class TextExtractorTest extends TestCase
     public function testExtractFilenameWithSpaces(): void
     {
         $pdfPath = __DIR__.'/data/dummy with spaces in its name.pdf';
-        $text = (new TextExtractor($this->binPath))->toString($pdfPath);
+        $text = (new Pdftotext($this->binPath))->toString($pdfPath);
 
         self::assertSame($this->dummyPdfText, $text);
     }
@@ -70,7 +70,7 @@ class TextExtractorTest extends TestCase
     public function testExtractFilenameWithSingleQuotes(): void
     {
         $pdfPath = __DIR__.'/data/dummy\'s_file.pdf';
-        $text = (new TextExtractor($this->binPath))->toString($pdfPath);
+        $text = (new Pdftotext($this->binPath))->toString($pdfPath);
 
         self::assertSame($this->dummyPdfText, $text);
     }
@@ -83,7 +83,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtractWithOptionsWithoutHyphen(): void
     {
-        $text = (new TextExtractor($this->binPath, ['layout']))
+        $text = (new Pdftotext($this->binPath, ['layout']))
             ->toString(__DIR__.'/data/scoreboard.pdf')
         ;
 
@@ -98,7 +98,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtractWithOptionsStartingWithHyphen(): void
     {
-        $converter = new TextExtractor($this->binPath);
+        $converter = new Pdftotext($this->binPath);
         self::assertSame($this->binPath, $converter->binaryPath());
 
         $text = $converter->toString(new \SplFileObject(__DIR__.'/data/scoreboard.pdf', 'r'), ['-layout']);
@@ -114,7 +114,7 @@ class TextExtractorTest extends TestCase
      */
     public function testExtractWithTextSavedToFile(): void
     {
-        (new TextExtractor($this->binPath, ['-layout']))->toFile(
+        (new Pdftotext($this->binPath, ['-layout']))->toFile(
             __DIR__.'/data/scoreboard.pdf',
             __DIR__.'/data/scoreboard.txt',
             ['-layout']
@@ -133,7 +133,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfThePDFFileIsNotFound(): void
     {
         $this->expectException(FileNotFound::class);
-        (new TextExtractor($this->binPath))->toString('/no/pdf/here/dummy.pdf');
+        (new Pdftotext($this->binPath))->toString('/no/pdf/here/dummy.pdf');
     }
 
     /**
@@ -142,7 +142,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheSplFileInfoFileIsNotFound(): void
     {
         $this->expectException(FileNotFound::class);
-        (new TextExtractor($this->binPath))->toString(new \SplFileInfo('/no/pdf/here/dummy.pdf'));
+        (new Pdftotext($this->binPath))->toString(new \SplFileInfo('/no/pdf/here/dummy.pdf'));
     }
 
     /**
@@ -151,7 +151,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsTypeError(): void
     {
         $this->expectException(\TypeError::class);
-        (new TextExtractor($this->binPath))->toString(['/no/pdf/here/dummy.pdf']);
+        (new Pdftotext($this->binPath))->toString(['/no/pdf/here/dummy.pdf']);
     }
 
     /**
@@ -160,7 +160,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheBinaryIsNotFound(): void
     {
         $this->expectException(ProcessFailed::class);
-        (new TextExtractor('/there/is/no/place/like/home/pdftotext'))
+        (new Pdftotext('/there/is/no/place/like/home/pdftotext'))
             ->toString($this->dummyPdf);
     }
 
@@ -170,7 +170,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheOptionsIsInvalid(): void
     {
         $this->expectException(ProcessFailed::class);
-        (new TextExtractor($this->binPath, ['-foo']))->toString($this->dummyPdf);
+        (new Pdftotext($this->binPath, ['-foo']))->toString($this->dummyPdf);
     }
 
     /**
@@ -181,7 +181,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheDestinationFileTypeIsNotSupported(): void
     {
         $this->expectException(\TypeError::class);
-        (new TextExtractor($this->binPath, ['-foo']))->toFile($this->dummyPdf, []);
+        (new Pdftotext($this->binPath, ['-foo']))->toFile($this->dummyPdf, []);
     }
 
 
@@ -193,7 +193,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheDestinationFileIsNotWritable(): void
     {
         $this->expectException(FileNotSaved::class);
-        (new TextExtractor($this->binPath, ['-layout']))->toFile($this->dummyPdf, new \SplFileObject($this->dummyPdf, 'r'));
+        (new Pdftotext($this->binPath, ['-layout']))->toFile($this->dummyPdf, new \SplFileObject($this->dummyPdf, 'r'));
     }
 
     /**
@@ -201,7 +201,7 @@ class TextExtractorTest extends TestCase
      */
     public function testAddingTimeoutConditions(): void
     {
-        $converter = new TextExtractor($this->binPath);
+        $converter = new Pdftotext($this->binPath);
         $converter->setDefaultOptions(['-layout']);
         $converter->setTimeout(null);
 
@@ -215,6 +215,6 @@ class TextExtractorTest extends TestCase
     public function testAddingTimoutConditionsFails(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        (new TextExtractor($this->binPath))->setTimeout(-0.1);
+        (new Pdftotext($this->binPath))->setTimeout(-0.1);
     }
 }
