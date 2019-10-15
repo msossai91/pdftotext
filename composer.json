@@ -1,0 +1,49 @@
+{
+    "name": "bakame/pdftotext",
+    "description": "A wrapper around pdftotext.",
+    "homepage": "https://github.com/bakame-php/pdftotext",
+    "license": "MIT",
+    "require": {
+        "symfony/process": "^4.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.4",
+        "friendsofphp/php-cs-fixer": "^2.15",
+        "phpstan/phpstan": "^0.11.16",
+        "phpstan/phpstan-strict-rules": "^0.11.1",
+        "phpstan/phpstan-phpunit": "^0.11.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bakame\\Pdftotext\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BakameTest\\Pdftotext\\": "tests/"
+        }
+    },
+    "scripts": {
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run --allow-risky=yes --ansi",
+        "phpstan-src": "phpstan analyse -l max -c phpstan.src.neon src --ansi",
+        "phpstan-tests": "phpstan analyse -l max -c phpstan.tests.neon tests --ansi",
+        "phpstan": [
+            "@phpstan-src",
+            "@phpstan-tests"
+        ],
+        "phpunit": "phpunit --coverage-text",
+        "test": [
+            "@phpcs",
+            "@phpstan",
+            "@phpunit"
+        ]
+    },
+    "scripts-descriptions": {
+        "phpcs": "Runs coding style test suite",
+        "phpstan": "Runs complete codebase static analysis",
+        "phpstan-src": "Runs source code static analysis",
+        "phpstan-test": "Runs test suite static analysis",
+        "phpunit": "Runs unit and functional testing",
+        "test": "Runs full test suite"
+    }
+}
