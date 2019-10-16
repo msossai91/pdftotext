@@ -52,35 +52,46 @@ class TextExtractorTest extends TestCase
 
     /**
      * @covers ::__construct
-     * @covers ::toString
+     * @covers ::extract
      */
     public function testExtract(): void
     {
-        $text = (new Pdftotext($this->binPath))->toString($this->dummyPdf);
+        $text = (new Pdftotext($this->binPath))->extract($this->dummyPdf);
+
+        self::assertSame($this->dummyPdfText, $text);
+    }
+
+    /**
+     * @covers ::fromUnix
+     */
+    public function testFromUnix(): void
+    {
+        $extractor = Pdftotext::fromUnix();
+        $text = $extractor->extract($this->dummyPdf);
 
         self::assertSame($this->dummyPdfText, $text);
     }
 
     /**
      * @covers ::__construct
-     * @covers ::toString
+     * @covers ::extract
      * @covers ::filterOptions
      */
     public function testExtractFilenameWithSpaces(): void
     {
         $pdfPath = __DIR__.'/data/dummy with spaces in its name.pdf';
-        $text = (new Pdftotext($this->binPath))->toString($pdfPath);
+        $text = Pdftotext::fromUnix()->extract($pdfPath);
 
         self::assertSame($this->dummyPdfText, $text);
     }
 
     /**
-     * @covers ::toString
+     * @covers ::extract
      */
     public function testExtractFilenameWithSingleQuotes(): void
     {
         $pdfPath = __DIR__.'/data/dummy\'s_file.pdf';
-        $text = (new Pdftotext($this->binPath))->toString($pdfPath);
+        $text = Pdftotext::fromUnix()->extract($pdfPath);
 
         self::assertSame($this->dummyPdfText, $text);
     }
@@ -94,24 +105,21 @@ class TextExtractorTest extends TestCase
     public function testExtractWithOptionsWithoutHyphen(): void
     {
         $text = (new Pdftotext($this->binPath, ['layout']))
-            ->toString(__DIR__.'/data/scoreboard.pdf')
+            ->extract(__DIR__.'/data/scoreboard.pdf')
         ;
 
         self::assertStringContainsString('Charleroi 50      28     13 11 4', $text);
     }
 
     /**
-     * @covers ::binaryPath
      * @covers ::filterInputPath
      * @covers ::mergeOptions
-     * @covers ::toString
+     * @covers ::extract
      */
     public function testExtractWithOptionsStartingWithHyphen(): void
     {
-        $converter = new Pdftotext($this->binPath);
-        self::assertSame($this->binPath, $converter->binaryPath());
-
-        $text = $converter->toString(new \SplFileObject(__DIR__.'/data/scoreboard.pdf', 'r'), ['-layout']);
+        $converter = Pdftotext::fromUnix();
+        $text = $converter->extract(new \SplFileObject(__DIR__.'/data/scoreboard.pdf', 'r'), ['-layout']);
 
         self::assertStringContainsString('Charleroi 50      28     13 11 4', $text);
     }
@@ -119,12 +127,12 @@ class TextExtractorTest extends TestCase
     /**
      * @covers ::mergeOptions
      * @covers ::filterOutputPath
-     * @covers ::toString
-     * @covers ::toFile
+     * @covers ::extract
+     * @covers ::save
      */
     public function testExtractWithTextSavedToFile(): void
     {
-        (new Pdftotext($this->binPath, ['-layout']))->toFile(
+        Pdftotext::fromUnix(['-layout'])->save(
             __DIR__.'/data/scoreboard.pdf',
             __DIR__.'/data/scoreboard.txt',
             ['-layout']
@@ -143,7 +151,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfThePDFFileIsNotFound(): void
     {
         $this->expectException(FileNotFound::class);
-        (new Pdftotext($this->binPath))->toString('/no/pdf/here/dummy.pdf');
+        Pdftotext::fromUnix()->extract('/no/pdf/here/dummy.pdf');
     }
 
     /**
@@ -152,7 +160,7 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsExceptionIfTheSplFileInfoFileIsNotFound(): void
     {
         $this->expectException(FileNotFound::class);
-        (new Pdftotext($this->binPath))->toString(new \SplFileInfo('/no/pdf/here/dummy.pdf'));
+        Pdftotext::fromUnix()->extract(new \SplFileInfo('/no/pdf/here/dummy.pdf'));
     }
 
     /**
@@ -161,49 +169,49 @@ class TextExtractorTest extends TestCase
     public function testExtractThrowsTypeError(): void
     {
         $this->expectException(\TypeError::class);
-        (new Pdftotext($this->binPath))->toString(['/no/pdf/here/dummy.pdf']);
+        Pdftotext::fromUnix()->extract(['/no/pdf/here/dummy.pdf']);
     }
 
     /**
-     * @covers ::toString
+     * @covers ::extract
      */
     public function testExtractThrowsExceptionIfTheBinaryIsNotFound(): void
     {
         $this->expectException(ProcessFailed::class);
         (new Pdftotext('/there/is/no/place/like/home/pdftotext'))
-            ->toString($this->dummyPdf);
+            ->extract($this->dummyPdf);
     }
 
     /**
-     * @covers ::toString
+     * @covers ::extract
      */
     public function testExtractThrowsExceptionIfTheOptionsIsInvalid(): void
     {
         $this->expectException(ProcessFailed::class);
-        (new Pdftotext($this->binPath, ['-foo']))->toString($this->dummyPdf);
+        Pdftotext::fromUnix(['-foo'])->extract($this->dummyPdf);
     }
 
     /**
      * @covers ::filterOutputPath
-     * @covers ::toString
-     * @covers ::toFile
+     * @covers ::extract
+     * @covers ::save
      */
     public function testExtractThrowsExceptionIfTheDestinationFileTypeIsNotSupported(): void
     {
         $this->expectException(\TypeError::class);
-        (new Pdftotext($this->binPath, ['-foo']))->toFile($this->dummyPdf, []);
+        Pdftotext::fromUnix(['-foo'])->save($this->dummyPdf, []);
     }
 
 
     /**
      * @covers ::filterOutputPath
-     * @covers ::toString
-     * @covers ::toFile
+     * @covers ::extract
+     * @covers ::save
      */
     public function testExtractThrowsExceptionIfTheDestinationFileIsNotWritable(): void
     {
         $this->expectException(FileNotSaved::class);
-        (new Pdftotext($this->binPath, ['-layout']))->toFile($this->dummyPdf, new \SplFileObject($this->dummyPdf, 'r'));
+        (new Pdftotext($this->binPath, ['-layout']))->save($this->dummyPdf, new \SplFileObject($this->dummyPdf, 'r'));
     }
 
     /**
@@ -215,7 +223,7 @@ class TextExtractorTest extends TestCase
         $converter->setDefaultOptions(['-layout']);
         $converter->setTimeout(null);
 
-        $text = $converter->toString(new \SplFileObject(__DIR__.'/data/scoreboard.pdf', 'r'));
+        $text = $converter->extract(new \SplFileObject(__DIR__.'/data/scoreboard.pdf', 'r'));
         self::assertStringContainsString('Charleroi 50      28     13 11 4', $text);
     }
 

@@ -16,8 +16,8 @@ This package provides a class to extract text from a pdf.
 
 use Bakame\Pdftotext\Pdftotext;
 
-$extractor = new Pdftotext('/path/to/pdftotext');
-$text = $extractor->toString('/path/to/file.pdf');
+$extractor = Pdftotext::fromUnix();
+$text = $extractor->extract('/path/to/file.pdf');
 ````
 
 ## Requirements
@@ -32,16 +32,24 @@ which pdftotext
 
 If it is installed it will return the path to the binary.
 
-To install the binary you can use this command on Ubuntu or Debian:
+To install the binary you can use
+
+- On apt based system:
 
 ```bash
 apt-get install poppler-utils
 ```
 
-If you're on RedHat or CentOS use this:
+On yum based system:
 
 ```bash
 yum install poppler-utils
+```
+
+On MacOS
+
+```bash
+brew install poppler
 ```
 
 ## Installation
@@ -65,8 +73,19 @@ Extracting text from a pdf is easy, just need to specify:
 use Bakame\Pdftotext\Pdftotext;
 
 $text = (new Pdftotext('/path/to/pdftotext'))
-    ->toString('/path/to/file.pdf')
+    ->extract('/path/to/file.pdf')
 ;
+```
+
+If you are on a Linux based system you can use the `fromUnix` named constructor which will try to locate
+and return an instance using the correct executable path.
+
+```php
+<?php
+
+use Bakame\Pdftotext\Pdftotext;
+
+$text = Pdftotext::fromUnix()->extract('/path/to/file.pdf');
 ```
 
 Sometimes you may want to use [pdftotext options](https://linux.die.net/man/1/pdftotext). 
@@ -76,30 +95,34 @@ You can add them as options to the `toString` method calls like shown below:
 <?php
 
 use Bakame\Pdftotext\Pdftotext;
-$text = (new Pdftotext('/path/to/pdftotext'))
-    ->toString('table.pdf', ['layout', 'r 96'])
-;
+$text = Pdftotext::fromUnix()->extract('table.pdf', ['layout', 'r 96']);
 ```
 
-If you need to add defaults options, you can use the `setDefaultOptions` method to add basic options on each extraction call, or use
-the class constructor :
+If you need to add defaults options, you can use the `setDefaultOptions` method
+to add basic options on each extraction call, or use the class constructor :
  
  ```php
 <?php
 
 use Bakame\Pdftotext\Pdftotext;
 $text = (new Pdftotext('/path/to/pdftotext', ['layout', 'r 96']))
-    ->toString('table.pdf', ['f 1'])
+    ->extract('table.pdf', ['f 1'])
 ;
+// will return the same data as
+
+$text = Pdftotext::fromUnix(['layout', 'r 96'])->extract('table.pdf', ['f 1']);
+
 // will return the same data as
 
 $extractor = new Pdftotext('/path/to/pdftotext');
 $extractor->setDefaultOptions(['layout', 'r 96']);
-$text = $extractor->toString('table.pdf', ['f 1']);
+$text = $extractor->extract('table.pdf', ['f 1']);
  ```
 
-You can even directly save your text extraction to a file using the `toFile` method. This 
-method takes the same arguments as the `toString` method but insert a destination file as its
+Default options will be merge with the individuals options added when calling the `extract` method.
+
+You can even directly save your text extraction to a file using the `save` method. This 
+method takes the same arguments as the `extract` method but requires a destination file as its
 second argument.
 
  ```php
@@ -107,9 +130,7 @@ second argument.
 
 use Bakame\Pdftotext\Pdftotext;
 
-$bytes = (new Pdftotext('/path/to/pdftotext', ['layout', 'r 96']))
-    ->toFile('table.pdf', 'table.txt', ['f 1'])
-;
+$bytes = Pdftotext::fromUnix(['layout', 'r 96'])->save('table.pdf', 'table.txt', ['f 1']);
  ```
 The returned `$bytes` is the number of bytes written to the file.
 
@@ -124,7 +145,7 @@ use Bakame\Pdftotext\Pdftotext;
 
 $extractor = new Pdftotext('/path/to/pdftotext', ['layout', 'r 96']);
 $extractor->setTimeout(120); //the extraction will timeout after 2 minutes.
-$bytes = $extractor->toFile('table.pdf', 'table.txt', ['f 1']);
+$bytes = $extractor->save('table.pdf', 'table.txt', ['f 1']);
  ```
 
 Testing

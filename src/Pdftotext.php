@@ -28,10 +28,8 @@ final class Pdftotext
 {
     /**
      * Default process timeout in seconds.
-     *
-     * @var float
      */
-    public const PROCESS_TIMEOUT = 60.0;
+    public const DEFAULT_PROCESS_TIMEOUT = 60.0;
 
     /**
      * @var string
@@ -52,19 +50,24 @@ final class Pdftotext
      * New instance.
      * @param ?float $timeout
      */
-    public function __construct(string $binPath, array $defaultOptions = [], ?float $timeout = self::PROCESS_TIMEOUT)
+    public function __construct(string $binPath, array $defaultOptions = [], ?float $timeout = self::DEFAULT_PROCESS_TIMEOUT)
     {
         $this->binPath = $binPath;
         $this->setDefaultOptions($defaultOptions);
         $this->setTimeout($timeout);
     }
 
-    /**
-     * Get pdftotext binary path.
-     */
-    public function binaryPath(): string
+    public static function fromUnix(array $defaultOptions = [], ?float $timeout = self::DEFAULT_PROCESS_TIMEOUT): self
     {
-        return $this->binPath;
+        $process = Process::fromShellCommandline('which pdftotext');
+        $process->run();
+        if ($process->isSuccessful()) {
+            $binPath = trim($process->getOutput());
+
+            return new self($binPath, $defaultOptions, $timeout);
+        }
+
+        throw new FileNotFound('The pdftotext executable could not be auto-detected.');
     }
 
     /**
@@ -100,15 +103,16 @@ final class Pdftotext
      *
      * @param \SplFileInfo|string   $pdfPath
      * @param \SplFileObject|string $destPath
+     * @param string[]              $options
      */
-    public function toFile($pdfPath, $destPath, array $options = []): int
+    public function save($pdfPath, $destPath, array $options = []): int
     {
         $destFile = $this->filterOutputPath($destPath);
-        $text = $this->toString($pdfPath, $options);
+        $text = $this->extract($pdfPath, $options);
         $bytes = $destFile->fwrite($text);
 
         if (is_string($destPath)) {
-            unset($destFile);
+            $destFile = null;
         }
 
         if ($bytes === null || 0 === $bytes) {
@@ -119,11 +123,12 @@ final class Pdftotext
     }
 
     /**
-     * Convert the PDF to raw text using the binary and symfony process.
+     * Extracts the PDF to raw text using the binary and symfony process.
      *
      * @param \SplFileInfo|string $pdfPath
+     * @param string[]            $options
      */
-    public function toString($pdfPath, array $options = []): string
+    public function extract($pdfPath, array $options = []): string
     {
         $path = $this->filterInputPath($pdfPath);
         $options = $this->mergeOptions($options);
@@ -141,6 +146,10 @@ final class Pdftotext
 
     /**
      * Filter pdftotext options.
+     *
+     * @param string[] $options
+     *
+     * @return string[]
      */
     private function filterOptions(array $options): array
     {
@@ -161,6 +170,10 @@ final class Pdftotext
 
     /**
      * pdftotext merge options.
+     *
+     * @param string[] $options
+     *
+     * @return string[]
      */
     private function mergeOptions(array $options): array
     {
