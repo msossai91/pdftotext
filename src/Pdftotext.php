@@ -48,6 +48,7 @@ final class Pdftotext
 
     /**
      * New instance.
+     *
      * @param ?float $timeout
      */
     public function __construct(string $binPath, array $defaultOptions = [], ?float $timeout = self::DEFAULT_PROCESS_TIMEOUT)
@@ -57,6 +58,14 @@ final class Pdftotext
         $this->setTimeout($timeout);
     }
 
+    /**
+     * Returns a new instance from a Unix based OS.
+     *
+     * @param string[] $defaultOptions
+     * @param ?float   $timeout
+     *
+     * @throws FileNotFound
+     */
     public static function fromUnix(array $defaultOptions = [], ?float $timeout = self::DEFAULT_PROCESS_TIMEOUT): self
     {
         $process = Process::fromShellCommandline('which pdftotext');
