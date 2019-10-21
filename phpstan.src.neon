@@ -2,7 +2,7 @@ includes:
   - vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
   ignoreErrors:
-    - '#Strict comparison using === between int and null will always evaluate to false\.#'
+    - '#Strict comparison using === between null and int will always evaluate to false\.#'
     - '#Call to function is_string\(\) with string will always evaluate to true\.#'
     - '#Instanceof between SplFileInfo and SplFileInfo will always evaluate to true\.#'
   reportUnmatchedIgnoredErrors: true
