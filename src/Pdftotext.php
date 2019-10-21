@@ -124,7 +124,7 @@ final class Pdftotext
             $destFile = null;
         }
 
-        if ($bytes === null || 0 === $bytes) {
+        if (null === $bytes || 0 === $bytes) {
             throw new FileNotSaved('The Converted PDF could not be saved.');
         }
 
