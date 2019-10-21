@@ -16,8 +16,8 @@ This package provides a class to extract text from a pdf.
 
 use Bakame\Pdftotext\Pdftotext;
 
-$extractor = Pdftotext::fromUnix();
-$text = $extractor->extract('/path/to/file.pdf');
+$pdftotext = Pdftotext::fromUnix();
+$text = $pdftotext->extract('/path/to/file.pdf');
 ````
 
 ## Requirements
@@ -114,9 +114,9 @@ $text = Pdftotext::fromUnix(['layout', 'r 96'])->extract('table.pdf', ['f 1']);
 
 // will return the same data as
 
-$extractor = new Pdftotext('/path/to/pdftotext');
-$extractor->setDefaultOptions(['layout', 'r 96']);
-$text = $extractor->extract('table.pdf', ['f 1']);
+$pdftotext = new Pdftotext('/path/to/pdftotext');
+$pdftotext->setDefaultOptions(['layout', 'r 96']);
+$text = $pdftotext->extract('table.pdf', ['f 1']);
  ```
 
 Default options will be merge with the individuals options added when calling the `extract` method.
@@ -143,9 +143,9 @@ You can set a timeout if you are dealing with larges PDF files using the `setTim
 
 use Bakame\Pdftotext\Pdftotext;
 
-$extractor = new Pdftotext('/path/to/pdftotext', ['layout', 'r 96']);
-$extractor->setTimeout(120); //the extraction will timeout after 2 minutes.
-$bytes = $extractor->save('table.pdf', 'table.txt', ['f 1']);
+$pdftotext = new Pdftotext('/path/to/pdftotext', ['layout', 'r 96']);
+$pdftotext->setTimeout(120); //the extraction will timeout after 2 minutes.
+$bytes = $pdftotext->save('table.pdf', 'table.txt', ['f 1']);
  ```
 
 Testing
