@@ -89,7 +89,7 @@ $text = Pdftotext::fromUnix()->extract('/path/to/file.pdf');
 ```
 
 Sometimes you may want to use [pdftotext options](https://linux.die.net/man/1/pdftotext). 
-You can add them as options to the `toString` method calls like shown below:
+You can add them as options to the `extract` method calls like shown below:
 
 ```php
 <?php
