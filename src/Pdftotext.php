@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Bakame\Pdftotext;
+namespace Spatie\Pdftotext;
 
 use Symfony\Component\Process\Process;
 use function array_map;
