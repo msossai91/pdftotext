@@ -1,7 +1,7 @@
 {
-    "name": "bakame/pdftotext",
+    "name": "pdftotext/pdftotext",
     "description": "A wrapper around pdftotext.",
-    "homepage": "https://github.com/bakame-php/pdftotext",
+    "homepage": "https://github.com/msossai91/pdftotext",
     "license": "MIT",
     "require": {
         "symfony/process": "^4.3"
@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Bakame\\Pdftotext\\": "src/"
+            "Pdftotext\\Pdftotext\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BakameTest\\Pdftotext\\": "tests/"
+            "PdftotextTest\\Pdftotext\\": "tests/"
         }
     },
     "scripts": {
