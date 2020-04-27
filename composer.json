@@ -1,5 +1,5 @@
 {
-    "name": "pdftotext/pdftotext",
+    "name": "spatie/pdf-to-text",
     "description": "A wrapper around pdftotext.",
     "homepage": "https://github.com/msossai91/pdftotext",
     "license": "MIT",
@@ -15,12 +15,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Pdftotext\\Pdftotext\\": "src/"
+            "Spatie\\Pdftotext\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PdftotextTest\\Pdftotext\\": "tests/"
+            "SpatieTest\\Pdftotext\\": "tests/"
         }
     },
     "scripts": {
